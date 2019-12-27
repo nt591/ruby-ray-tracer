@@ -36,3 +36,6 @@ class Color
     )
   end
 end
+
+class NullColor
+end
