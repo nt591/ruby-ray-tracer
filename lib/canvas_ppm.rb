@@ -4,12 +4,8 @@ class CanvasPPM
     @canvas = canvas
   end
 
-  def to_s
+  def render
     segment(0, -1)
-  end
-
-  def lines
-    [metadata, pixel_data].flatten
   end
 
   def segment(start, finish)
@@ -17,6 +13,10 @@ class CanvasPPM
   end
 
   private
+
+  def lines
+    [metadata, pixel_data, last_line].flatten
+  end
 
   def metadata
     [
@@ -32,6 +32,10 @@ class CanvasPPM
       collection << RowFormatter.new(pixel_row, max_color_val).format
     end
     collection
+  end
+
+  def last_line
+    "\n"
   end
 
   def max_color_val
@@ -51,10 +55,29 @@ class CanvasPPM
 
     def format
       temp = []
-      row.each do |pixel|
-        temp << format_pixel(pixel)
+      string_arr = []
+      count = 0
+      pixels = row.map { |pixel| format_pixel pixel}.flatten
+
+      # collect pixels by pulling into temp
+      # flush when count gets too high
+
+      pixels.each do |color|
+        # flush temp if we need it
+        charsize = color.to_s.length + 1 # implicit space
+        if charsize + count > 70
+          count = 0
+          string_arr << temp.join(" ")
+          temp = []
+        end
+        temp << color
+        count += charsize
       end
-      temp.join(" ")
+
+      # handle leftover temp
+      string_arr << temp.join(" ")
+
+      string_arr.join("\n")
     end
 
     private
@@ -64,7 +87,7 @@ class CanvasPPM
         format_color(pixel.red),
         format_color(pixel.green),
         format_color(pixel.blue),
-      ].join(" ")
+      ]
     end
 
     def format_color(color)
