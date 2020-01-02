@@ -43,8 +43,10 @@ RSpec.describe CanvasPPM do
 
       expected =
 """255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
+153 255 204 153 255 204 153 255 204 153 255 204 153
+255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
 153 255 204 153 255 204 153 255 204 153 255 204 153"""
-      expect(ppm.segment(3, 3)).to eq expected
+      expect(ppm.segment(3, 6)).to eq expected
     end
 
     it 'ends with a new line' do

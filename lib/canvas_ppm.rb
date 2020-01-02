@@ -9,6 +9,10 @@ class CanvasPPM
   end
 
   def segment(start, finish)
+    arr = lines.slice(start..finish)
+    # if we're slicing up to the end, don't join the last_line with \n
+
+
     lines.slice(start..finish).join("\n")
   end
 
@@ -77,7 +81,7 @@ class CanvasPPM
       # handle leftover temp
       string_arr << temp.join(" ")
 
-      string_arr.join("\n")
+      string_arr
     end
 
     private
