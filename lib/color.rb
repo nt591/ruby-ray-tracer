@@ -35,7 +35,26 @@ class Color
       c1.blue * c2.blue
     )
   end
+
+  def self.red
+    self.for('red')
+  end
+
+  def self.for(color)
+    case color.downcase
+    when 'red'
+      Color.new(255, 0, 0)
+    when 'green'
+      Color.new(0, 255, 0)
+    when 'blue'
+      Color.new(0, 0 ,255)
+    else
+      raise UnimplementedColorError "#{color} is not a color"
+    end
+  end
 end
+
+class UnimplementedColorError < StandardError; end
 
 class NullColor
 end

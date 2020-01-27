@@ -1,46 +1,63 @@
 require_relative './tuple.rb'
+require_relative './canvas.rb'
 
 class Engine
-  attr_accessor :environment, :projectile
+  attr_accessor :projectile
+  attr_reader :environment, :canvas
 
   def initialize(environment, projectile)
     @environment = environment
     @projectile = projectile
+    @canvas = Canvas.new(900, 550)
   end
 
   def run_loop
-    proj = projectile
-    while proj.y > 0
-      puts "---- READING Y AND X"
-      puts proj.position.y
-      puts proj.position.x
-      proj = tick(environment, proj)
+    while projectile_in_air?
+      canvas.write_at(projectile_x, projectile_y, Color.red)
+      tick
     end
 
-    puts "finished"
+    save!
   end
 
   def self.test
     env = Environment.new(
       Vector.new(0, -0.1, 0),
-      Vector.new(0, 0, -0.01)
+      Vector.new(-0.010, 0, 0)
     )
     proj = Projectile.new(
       Point.new(0, 1, 0),
-      Vector.new(1, 1, 0).normalize
+      Vector.new(1, 1.8, 0).normalize * 11.25
     )
 
     engine = Engine.new(env, proj)
-    puts engine
     engine.run_loop
   end
 
   private
 
-  def tick(environment, projectile)
+  def save!
+    open('canvas.ppm', 'w') do |f|
+      f << canvas.to_PPM.render
+    end
+  end
+
+  def tick
     pos = projectile.position + projectile.velocity
     vel = projectile.velocity + environment.gravity + environment.wind
-    Projectile.new(pos, vel)
+    @projectile = Projectile.new(pos, vel)
+  end
+
+  def projectile_x
+    projectile.x.round
+  end
+
+  def projectile_y
+    canvas.height - projectile.y.round
+  end
+
+  def projectile_in_air?
+    projectile.y > 0
   end
 end
 
@@ -60,6 +77,10 @@ class Projectile
 
   def y
     position.y
+  end
+
+  def x
+    position.x
   end
 end
 

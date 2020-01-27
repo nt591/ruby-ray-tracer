@@ -1,4 +1,5 @@
-require 'color'
+require_relative './color'
+require_relative 'canvas_ppm'
 
 class Canvas
   attr_reader :width, :height, :pixels
